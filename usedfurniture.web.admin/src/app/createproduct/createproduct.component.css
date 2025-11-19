@@ -1,0 +1,136 @@
+/** src\app\createproduct\createproduct.component.css **/
+
+/* Make the page full width and height */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #F5F5F5;
+  color: #000;
+}
+
+.create-product-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  background: #121212;
+  color: #fff;
+  overflow-y: auto; /* Enable scrolling if content exceeds viewport */
+}
+
+.back-btn {
+  background: #15747D;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:hover {
+  background: #13686E;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 600px; /* Centered form with fixed max-width */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+textarea, select, input, 
+input[type="text"], input[type="date"], input[type="file"] {
+  padding: 10px;
+  border: 1px solid #4A4A4A;
+  border-radius: 4px;
+  background: #1E1E1E;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+  outline: none;
+  border-color: #15747D;
+}
+
+/* Checkbox styling */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group input {
+  margin-right: 8px;
+}
+
+/* Photo upload section */
+.photos-preview {
+  margin-top: 20px;
+}
+
+.photos-preview h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.photo-thumbnail {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.photo-thumbnail img {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #4A4A4A;
+}
+
+/* Create Button */
+.create-btn {
+  background: #15747D;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.create-btn:hover {
+  background: #13686E;
+}

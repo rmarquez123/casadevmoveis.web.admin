@@ -1,0 +1,77 @@
+<div class="create-product-container">
+  <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
+
+  <h2>Criar Novo Produto</h2>
+
+  <form (ngSubmit)="onCreate()">
+    <div class="form-group">
+      <label for="name">Nome:</label>
+      <input id="name" type="text" [(ngModel)]="product.name" name="name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="category">Categoria:</label>
+      <select id="category" [(ngModel)]="product.category" name="category" required>
+        <option *ngFor="let category of categories" [value]="category.categoryId">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição:</label>
+      <textarea id="description" [(ngModel)]="product.description" name="description" rows="4" required></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="length">Comprimento (cm):</label>
+      <input id="length" type="number" [(ngModel)]="product.depth" name="depth" min="0" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="depth">Largura (cm):</label>
+      <input id="depth" type="number" [(ngModel)]="product.length" name="length" min="0" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="height">Altura (cm):</label>
+      <input id="height" type="number" [(ngModel)]="product.height" name="height" min="0" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="price">Preço (BRL):</label>
+      <input id="price" type="number" [(ngModel)]="product.price" name="price" min="0" step="50" required>
+    </div>
+    
+
+
+    <div class="form-group">
+      <label for="date-received">Data de Recebimento:</label>
+      <input id="date-received" type="date" [(ngModel)]="dateReceived"
+        name="dateReceived" required />
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label for="available">
+        <input id="available" type="checkbox" [(ngModel)]="product.available" name="available">
+        Disponível
+      </label>
+    </div>
+
+
+    <div class="form-group">
+      <label for="photos">Fotos:</label>
+      <input id="photos" type="file" (change)="onPhotoUpload($event)" multiple accept="image/*">
+      <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
+    </div>
+
+    <div class="photos-preview" *ngIf="uploadedPhotos.length > 0">
+      <h3>Pré-visualização:</h3>
+      <div class="photo-thumbnail" *ngFor="let photo of uploadedPhotos">
+        <img [src]="photo" alt="Foto Carregada">
+      </div>
+    </div>
+
+    <button type="submit" class="create-btn">Criar</button>
+  </form>
+</div>

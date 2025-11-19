@@ -1,0 +1,25 @@
+/** styles.css */
+/* Global Body and Basic Setup */
+body {
+    background-color: #f5f2f0;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Shared Footer Styling */
+  .footer-container {
+    background: #eae0d5;
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid #ccc;
+  }
+  
+  .footer-container p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  /* Any other truly global classes or resets can go here. */
+  

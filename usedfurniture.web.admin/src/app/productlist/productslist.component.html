@@ -1,0 +1,92 @@
+<!-- src\app\productslist.component.html -->
+
+
+<div class="products-container">
+  <div class="sidebar">
+    <button (click)="onCreateNew()">Produtos</button>
+    <button>Redes Sociais</button>
+    <button>Configurações</button>
+  </div>
+
+  <div class="main-content">
+    <h1>Casa De Móveis Usados</h1>
+
+    <!-- Category filter -->
+    <div class="controls-container">
+      
+  
+      <div class="filter-container">
+        <label for="category-filter">Filtrar por Categoria:</label>
+        <select id="category-filter" [(ngModel)]="selectedCategoryId" (change)="filterProducts()">
+          <option [value]="null">Todas as Categorias</option>
+          <option *ngFor="let category of categories" [value]="category.categoryId">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="view-toggle">
+        <button class="create-btn" (click)="toggleView()">Mudar Para {{ isGridView ? 'Table' : 'Grid' }} View</button>
+      </div>
+
+      <div class="button-container">
+        <button class="create-btn" (click)="onCreateNew()">[+] Adicionar Novo Produto</button>
+      </div>
+
+    </div>
+
+
+    <!-- Conditionally render either the table or grid -->
+    <table *ngIf="!isGridView">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Categoria</th>
+          <th>Fotos</th>
+          <th>Preco</th>
+          <th>Data de Recebimento</th>
+          <th>Disponível</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts" (dblclick)="onEdit(product)">
+          <td>{{ product.name }}</td>
+          <td>{{ product.categoryName }}</td>
+          <td>
+            <div class="photo-thumbnails">
+              <img *ngFor="let photo of photos[product.id] || []" [src]="'data:image/jpeg;base64,' + photo.src"
+                alt="Photo" class="thumbnail" />
+            </div>
+          </td>
+          <td>{{ formatPrice(product.price)}}</td>
+          <td>{{ product.dateReceived | date }}</td>
+          <td>{{ product.available ? 'Sim' : 'Não' }}</td>
+          <td>
+            <button (click)="onEdit(product)">Editar</button>
+            <button (click)="onRemove(product.id!)">Remover</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid" *ngIf="isGridView">
+      <div class="grid-item" *ngFor="let product of filteredProducts" (dblclick)="onEdit(product)">
+        <h3>{{ product.name }}</h3>
+        <p>Categoria: {{ product.categoryName }}</p>
+        <div class="photo-thumbnails">
+          <img *ngFor="let photo of photos[product.id] || []" [src]="'data:image/jpeg;base64,' + photo.src" alt="Photo"
+            class="thumbnail" />
+        </div>
+        <p>Preco: {{ formatPrice(product.price)}}</p>
+        <p>Data: {{ product.dateReceived | date }}</p>
+        <p>Disponível: {{ product.available ? 'Sim' : 'Não' }}</p>
+        <div>
+          <button (click)="onEdit(product)">Editar</button>
+          <button (click)="onRemove(product.id!)">Remover</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

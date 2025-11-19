@@ -1,0 +1,298 @@
+/* src/app/editproduct/editproduct.component.css */
+
+/* General Styling */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #F5F5F5;
+  color: #000;
+}
+
+.edit-product-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  background: #121212;
+  color: #fff;
+  overflow-y: auto;
+}
+
+.edit-product-columns {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.left-column,
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.right-column {
+  align-items: center;
+}
+
+/* Header and Buttons */
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.back-btn,
+.save-btn {
+  background: #15747D;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.back-btn:hover,
+.save-btn:hover {
+  background: #13686E;
+}
+
+.remove-photo-btn {
+  background: #FF5722;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.remove-photo-btn:hover {
+  background: #E64A19;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+textarea, select, input, 
+input[type="file"] {
+  padding: 10px;
+  border: 1px solid #4A4A4A;
+  border-radius: 4px;
+  background: #1E1E1E;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #15747D;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group input {
+  margin-right: 8px;
+}
+
+/* Photos Section */
+.photo-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.photo-thumbnail {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.photo-thumbnail:hover {
+  border-color: #FF9800;
+  transform: scale(1.05);
+}
+
+.photo-thumbnail.selected {
+  border-color: #15747D;
+}
+
+.photo-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+/* Adjusted remove-photo-btn positioning */
+.photo-thumbnail .remove-photo-btn {
+  position: absolute;
+  top: 5px; /* Adjust spacing from top */
+  right: 5px; /* Adjust spacing from right */
+  background: red;
+  border: none;
+  color: white;
+  padding: 4px;
+  font-size: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.photo-thumbnail .remove-photo-btn:hover {
+  background: darkred;
+}
+/* Selected Photo */
+.selected-photo {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  max-height: 500px;
+  margin: 20px auto;
+}
+
+.selected-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 1px solid #4A4A4A;
+  border-radius: 8px;
+}
+
+/* Responsive Styles */
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .edit-product-columns {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .left-column, .right-column {
+    width: 100%;
+    flex: none;
+  }
+
+  form {
+    width: 100%;
+    max-width: 100%; /* Use full width on mobile */
+  }
+
+  .back-btn,
+  .save-btn {
+    width: 100%; /* Buttons take full width for easier tapping */
+    font-size: 1rem; /* Increase tap area */
+  }
+
+  .photo-thumbnails {
+    justify-content: center;
+    overflow-x: scroll; /* Ensure horizontal scrolling if thumbnails exceed width */
+  }
+
+  .photo-thumbnail {
+    width: 50px; /* Slightly smaller thumbnails on mobile */
+    height: 50px;
+  }
+
+  .selected-photo {
+    width: 100%; /* Full width on mobile */
+    height: auto; /* Maintain aspect ratio */
+    max-height: none; /* Remove any height restrictions */
+    margin: 10px 0; /* Add spacing around the photo */
+  }
+
+  .selected-photo img {
+    width: 100%; /* Ensure image fills the container width */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly */
+    border: none; /* Optional: Remove border for cleaner look */
+  }
+}
+
+.photos-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem; /* Space between thumbnails and remove button */
+}
+
+/* Adjusted remove-photo-btn for the single button */
+.remove-photo-btn {
+  align-self: flex-start; /* Keep it aligned near the top of the thumbnails */
+  background: #FF5722;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 10px; /* Some spacing above the button */
+}
+
+.selected-photo {
+  /* Ensure enough room for the navigation and image */
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: center; /* optional: center the contents */
+}
+
+/* Flex row with full width, placing buttons on opposite sides */
+.photo-navigation {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Space between buttons and the image */
+}
+
+/* Basic styling for buttons */
+.photo-navigation button {
+  background-color: #15747D;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.photo-navigation button:hover {
+  background-color: #13686E;
+}
+

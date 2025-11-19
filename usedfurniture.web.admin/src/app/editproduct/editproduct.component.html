@@ -1,0 +1,106 @@
+<!-- edit-product.component.html -->
+<div class="edit-product-container">
+  <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
+
+  <h2>Editar Produto</h2>
+
+  <div class="edit-product-columns">
+    <!-- Left Column: Product Details -->
+    <div class="left-column">
+      <form (ngSubmit)="onSave()">
+        <div class="form-group">
+          <label for="name">Nome:</label>
+          <input id="name" type="text" [(ngModel)]="product.name" name="name" required>
+        </div>
+
+        <label for="category">Categoria:</label>
+        <select id="category" [(ngModel)]="product.category" name="category" required>
+          <option *ngFor="let category of categories" [value]="category.categoryId">
+            {{ category.name }}
+          </option>
+        </select>
+        <div class="form-group">
+          <label for="description">Descrição:</label>
+          <textarea id="description" type="text" [(ngModel)]="product.description" name="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="length">Comprimento (cm):</label>
+          <input id="length" type="number" [(ngModel)]="product.depth" name="depth" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="width">Largura (cm):</label>
+          <input id="width" type="number" [(ngModel)]="product.length" name="length" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="height">Altura (cm):</label>
+          <input id="height" type="number" [(ngModel)]="product.height" name="height" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Preço (BRL):</label>
+          <input id="price" type="number" [(ngModel)]="product.price" name="price" min="0" step="50" required>
+        </div>
+
+        <div class="form-group">
+          <label for="date-received">Data de Recebimento:</label>
+          <input id="date-received" type="datetime-local" [(ngModel)]="dateReceivedLocal" name="dateReceived"
+            required />
+        </div>
+
+
+
+        <div class="form-group checkbox-group">
+          <label for="available">
+            <input id="available" type="checkbox" [(ngModel)]="product.available" name="available">
+            Disponível
+          </label>
+        </div>
+
+        <button type="submit" class="save-btn">Salvar</button>
+      </form>
+
+      <!-- Add New Photos -->
+      <div class="form-group photos-upload">
+        <h4>Adicionar Novas Fotos:</h4>
+        <input type="file" (change)="onPhotoUpload($event)" multiple accept="image/*">
+        <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
+      </div>
+
+    </div>
+
+
+    <!-- Right Column: Photos Section -->
+    <div class="right-column">
+      <!-- Thumbnails + Remove Button Section -->
+      <div class="photos-section">
+        <!-- Thumbnails Section -->
+        <div class="photo-thumbnails">
+          <div class="photo-thumbnail" *ngFor="let photo of existingPhotos; index as i"
+            [class.selected]="photo === selectedPhoto" (click)="onSelectPhoto(photo); selectedPhotoIndex = i">
+            <img [src]="'data:image/jpeg;base64,' + photo.src" alt="Thumbnail">
+          </div>
+        </div>
+
+        <!-- Single Remove Button (removes the *selected* photo) -->
+        <button class="remove-photo-btn" (click)="onRemovePhoto(selectedPhoto === null ? -1 : selectedPhoto.photoId)"
+          [disabled]="!selectedPhoto">
+          Remover Foto
+        </button>
+      </div>
+
+      <!-- Large Selected Photo + Next/Previous -->
+      <div class="selected-photo" *ngIf="selectedPhoto">
+        <!-- Navigation Buttons on Full Width -->
+        <div class="photo-navigation">
+          <button (click)="prevPhoto()">Anterior</button>
+          <button (click)="nextPhoto()">Próxima</button>
+        </div>
+
+        <img [src]="'data:image/jpeg;base64,' + selectedPhoto.src" alt="Selected Photo">
+      </div>
+    </div>
+  </div>
+</div>
