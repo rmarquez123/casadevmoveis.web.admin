@@ -71,6 +71,7 @@
              (dragover)="onDragOver($event)"
              (dragleave)="onDragLeave($event)"
              (drop)="onDrop($event)"
+             (paste)="onPaste($event)"
              (click)="fileInput.click()">
 
           <p>
@@ -86,12 +87,9 @@
             multiple
             accept="image/*">
         </div>
-
+        
         <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
       </div>
-
-
-
     </div>
 
 

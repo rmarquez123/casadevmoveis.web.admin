@@ -185,4 +185,21 @@ export class EditProductComponent implements OnInit {
     }
   }
 
+  onPaste(event: ClipboardEvent) {
+    const clipboardItems = event.clipboardData?.items;
+    if (!clipboardItems) return;
+
+    for (let i = 0; i < clipboardItems.length; i++) {
+      const item = clipboardItems[i];
+
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          this.processFiles({ 0: file, length: 1, item: (n: number) => file } as FileList);
+        }
+      }
+    }
+  }
+
+
 }
