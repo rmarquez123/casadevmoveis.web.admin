@@ -18,11 +18,38 @@
       </select>
     </div>
 
-    
     <div class="form-group">
       <label for="description">Descrição:</label>
-      <textarea id="description" [(ngModel)]="product.description" name="description" rows="4" required></textarea>
+
+      <textarea
+        id="description"
+        [(ngModel)]="product.description"
+        name="description"
+        rows="4"
+        required>
+      </textarea>
+
+      <div class="description-actions">
+        <button
+          type="button"
+          class="ai-btn"
+          (click)="onAutoDescribe()"
+          [disabled]="!uploadedFiles.length || isGeneratingDescription">
+          Usar IA para preencher título e descrição
+        </button>
+
+        <small *ngIf="!uploadedFiles.length">
+          Adicione pelo menos uma foto para usar a IA.
+        </small>
+        <small *ngIf="isGeneratingDescription">
+          Gerando descrição automática...
+        </small>
+        <small *ngIf="descriptionError" class="error">
+          {{ descriptionError }}
+        </small>
+      </div>
     </div>
+
 
     
     <div class="form-group">
