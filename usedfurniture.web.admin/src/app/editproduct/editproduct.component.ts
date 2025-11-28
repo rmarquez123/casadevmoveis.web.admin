@@ -21,6 +21,7 @@ export class EditProductComponent implements OnInit {
   selectedPhoto: Photo | null = null;
   categories: { categoryId: number; name: string }[] = [];
   isDragOver = false;
+  uploadedPhotos: Photo[] = [];
 
   constructor(
     private productsService: ProductsService,
@@ -89,19 +90,17 @@ export class EditProductComponent implements OnInit {
   onCancel() {
     this.router.navigate(['/products-list']);
   }
-
-  uploadedPhotos: Photo[] = [];
-
   
-  private processFiles(files: FileList) {
+  
+  private processFiles(files: FileList | File[]) {
     const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
-
+      
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
       // Optional: validate type / size
-      if (!file.type.startsWith('image/')) {
-        continue;
+      if (!file.type.startsWith('image/')) {  
+        continue;  
       }
       if (file.size > maxSizeBytes) {
         continue;
@@ -122,6 +121,8 @@ export class EditProductComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
+
 
   onPhotoUpload(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -183,7 +184,7 @@ export class EditProductComponent implements OnInit {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       this.processFiles(event.dataTransfer.files);
     }
-  }
+  } 
 
   onPaste(event: ClipboardEvent) {
     const clipboardItems = event.clipboardData?.items;
@@ -195,11 +196,16 @@ export class EditProductComponent implements OnInit {
       if (item.type.startsWith('image/')) {
         const file = item.getAsFile();
         if (file) {
-          this.processFiles({ 0: file, length: 1, item: (n: number) => file } as FileList);
+          // ✅ Just pass an array of File
+          this.processFiles([file]);
         }
       }
     }
+
+    // Optional: avoid pasting into a focused input/textarea
+    event.preventDefault();
   }
+
 
 
 }

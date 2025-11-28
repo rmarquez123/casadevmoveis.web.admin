@@ -71,20 +71,20 @@ export class CreateProductComponent implements OnInit {
 
   
 
-  private processFiles(files: FileList) {
+  private processFiles(files: FileList | File[]) {
     const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    // Normalize to a real array so we can use for...of safely
+    const fileArray = Array.from(files);  
 
-      // Optional: validate type and size
+    for (const file of fileArray) {
       if (!file.type.startsWith('image/')) {
         continue; // skip non-images
       }
       if (file.size > maxSizeBytes) {
         continue; // skip too-large images
       }
-
+  
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.uploadedPhotos.push(e.target.result);
@@ -92,6 +92,7 @@ export class CreateProductComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
 
   // Updated function: now just delegates to processFiles
   onPhotoUpload(event: Event) {
@@ -133,10 +134,15 @@ export class CreateProductComponent implements OnInit {
       if (item.type.startsWith('image/')) {
         const file = item.getAsFile();
         if (file) {
-          this.processFiles({ 0: file, length: 1, item: (n: number) => file } as FileList);
+          // ✅ Just pass an array of File
+          this.processFiles([file]);
         }
       }
     }
+
+    // Optional: avoid pasting into a focused input/textarea
+    event.preventDefault();
   }
+
 
 }
