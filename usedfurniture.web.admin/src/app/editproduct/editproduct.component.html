@@ -65,9 +65,32 @@
       <!-- Add New Photos -->
       <div class="form-group photos-upload">
         <h4>Adicionar Novas Fotos:</h4>
-        <input type="file" (change)="onPhotoUpload($event)" multiple accept="image/*">
+
+        <div class="drop-zone"
+             [class.drop-zone--over]="isDragOver"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+
+          <p>
+            Arraste e solte as fotos aqui<br>
+            <span>ou clique para selecionar</span>
+          </p>
+
+          <input
+            #fileInput
+            type="file"
+            (click)="$event.stopPropagation()"
+            (change)="onPhotoUpload($event)"
+            multiple
+            accept="image/*">
+        </div>
+
         <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
       </div>
+
+
 
     </div>
 

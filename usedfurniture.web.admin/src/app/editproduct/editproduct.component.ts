@@ -20,6 +20,7 @@ export class EditProductComponent implements OnInit {
 
   selectedPhoto: Photo | null = null;
   categories: { categoryId: number; name: string }[] = [];
+  isDragOver = false;
 
   constructor(
     private productsService: ProductsService,
@@ -91,22 +92,41 @@ export class EditProductComponent implements OnInit {
 
   uploadedPhotos: Photo[] = [];
 
+  
+  private processFiles(files: FileList) {
+    const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Optional: validate type / size
+      if (!file.type.startsWith('image/')) {
+        continue;
+      }
+      if (file.size > maxSizeBytes) {
+        continue;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const dataUrl: string = e.target.result;
+        const base64 = dataUrl.split(',')[1];
+
+        this.productsService.addPhoto(this.product.id, base64).subscribe((photoId) => {
+          const newPhoto: Photo = { photoId, src: base64 };
+          this.existingPhotos.push(newPhoto);
+          this.selectedPhoto = newPhoto;
+          this.selectedPhotoIndex = this.existingPhotos.length - 1;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onPhotoUpload(event: Event) {
-    
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      for (let i = 0; i < input.files.length; i++) {
-        const file = input.files[i];
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          const base64 = e.target.result.split(',')[1];
-          this.productsService.addPhoto(this.product.id, base64).subscribe((photoId) => {
-            this.existingPhotos.push({ photoId: photoId, src: base64 });
-            this.selectedPhoto = { photoId: photoId, src: base64 };
-          });
-        };
-        reader.readAsDataURL(file);
-      }
+      this.processFiles(input.files);
     }
   }
 
@@ -142,6 +162,27 @@ export class EditProductComponent implements OnInit {
     this.selectedPhoto = this.existingPhotos[this.selectedPhotoIndex];
   }
 
+  
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
 
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.processFiles(event.dataTransfer.files);
+    }
+  }
 
 }
