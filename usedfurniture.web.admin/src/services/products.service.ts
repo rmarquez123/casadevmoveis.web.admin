@@ -4,11 +4,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Photo, Product } from './product.model';
+import { environment } from "../environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
-//  private apiUrl = 'https://restapi.casademoveisusados.com/used_furniture_restapi';
-  private apiUrl = 'http://localhost:8082/used_furniture_restapi';
+  
+  private apiUrl = environment.apiUrl;
+  
 
   constructor(private http: HttpClient) { }
   getCategories(): Observable<{ categoryId: number; name: string }[]> {

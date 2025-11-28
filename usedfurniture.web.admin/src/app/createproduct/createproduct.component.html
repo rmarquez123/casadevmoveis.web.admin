@@ -60,10 +60,34 @@
 
 
     <div class="form-group">
-      <label for="photos">Fotos:</label>
-      <input id="photos" type="file" (change)="onPhotoUpload($event)" multiple accept="image/*">
-      <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
+  <label for="photos">Fotos:</label>
+
+    <div class="drop-zone"
+         [class.drop-zone--over]="isDragOver"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onDrop($event)"
+         (click)="fileInput.click()">
+
+      <p>
+        Arraste e solte as fotos aqui<br>
+        <span>ou clique para selecionar</span>
+      </p>
+
+      <!-- Hidden file input, still used for normal click selection -->
+      <input
+        #fileInput
+        id="photos"
+        type="file"
+        (click)="$event.stopPropagation()"
+        (change)="onPhotoUpload($event)"
+        multiple
+        accept="image/*">
     </div>
+
+    <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
+  </div>
+
 
     <div class="photos-preview" *ngIf="uploadedPhotos.length > 0">
       <h3>Pré-visualização:</h3>

@@ -16,6 +16,7 @@ import { forkJoin } from 'rxjs';
   imports: [RouterModule, CommonModule, FormsModule],
 })
 export class CreateProductComponent implements OnInit {
+
   product: Product = { id: -1, name: '', category: 0, categoryName: 'Cozina', 
     description: '', 
     dateReceived: new Date(), available: true,
@@ -23,6 +24,10 @@ export class CreateProductComponent implements OnInit {
   };
   categories: { categoryId: number; name: string }[] = [];
   dateReceived: string = '';
+
+  uploadedPhotos: string[] = [];
+  isDragOver = false; 
+  
   constructor(private productsService: ProductsService, private router: Router) { }
 
   ngOnInit(): void {
@@ -64,19 +69,59 @@ export class CreateProductComponent implements OnInit {
     this.router.navigate(['/products-list']);
   }
 
-  uploadedPhotos: string[] = [];
+  
 
+  private processFiles(files: FileList) {
+    const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Optional: validate type and size
+      if (!file.type.startsWith('image/')) {
+        continue; // skip non-images
+      }
+      if (file.size > maxSizeBytes) {
+        continue; // skip too-large images
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.uploadedPhotos.push(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Updated function: now just delegates to processFiles
   onPhotoUpload(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      for (let i = 0; i < input.files.length; i++) {
-        const file = input.files[i];
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.uploadedPhotos.push(e.target.result); // Add image preview to the array
-        };
-        reader.readAsDataURL(file);
-      }
+      this.processFiles(input.files);
     }
   }
+ 
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.processFiles(event.dataTransfer.files);
+    }
+  }
+
+
 }
