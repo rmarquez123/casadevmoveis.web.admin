@@ -119,7 +119,6 @@ export class CreateProductComponent implements OnInit {
 
     this.descriptionService.generateDescription(mainImage, {
       // You can tweak these defaults
-      location: 'Vila Mariana, São Paulo',
       price: this.product.price || undefined,
       dimensions: dimensionsHint || undefined,
       // you could also pass:
