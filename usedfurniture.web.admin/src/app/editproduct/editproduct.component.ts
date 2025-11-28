@@ -13,7 +13,15 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, RouterModule, FormsModule],
 })
 export class EditProductComponent implements OnInit {
-  product: Product = { id: -1, name: '', category: 0, categoryName: 'Cozina', description: "", dateReceived: new Date(), available: false, length: 0, depth: 0, height: 0, price: 0   };
+  product: Product = { 
+              id: -1, 
+              name: '', 
+              category: 0, 
+              categoryName: 'Cozina', 
+              description: "", 
+              dateReceived: new Date(), 
+              available: false, 
+              length: 0, depth: 0, height: 0, price: 0   };
   existingPhotos: Photo[] = []; // Existing photos
   newPhotos: { src: string }[] = []; // Newly added photos
   dateReceivedLocal: string = ''; // Local datetime string
@@ -71,11 +79,7 @@ export class EditProductComponent implements OnInit {
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
-
-
-
-
-
+  
   // Function Update: Save changes
   onSave() {
     this.product.dateReceived = new Date(this.dateReceivedLocal);
@@ -201,11 +205,8 @@ export class EditProductComponent implements OnInit {
         }
       }
     }
-
     // Optional: avoid pasting into a focused input/textarea
     event.preventDefault();
   }
-
-
 
 }
