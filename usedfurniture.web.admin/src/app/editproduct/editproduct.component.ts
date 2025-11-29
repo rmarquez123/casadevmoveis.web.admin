@@ -4,6 +4,7 @@ import { ProductsService } from '../../services/products.service';
 import { Photo, Product } from '../../services/product.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DescriptionService } from '../../services/description.service';
 
 @Component({
   selector: 'app-edit-product',
@@ -35,12 +36,12 @@ export class EditProductComponent implements OnInit {
     private productsService: ProductsService,
     private route: ActivatedRoute,
     private router: Router, 
-    private descriptionAiService: DescriptionAiService
+    private descriptionService: DescriptionService
   ) { }
   selectedPhotoIndex: number = 0; // Track which photo is selected
   
   isGeneratingDescription = false;
-  aiErrorMessage: string | null = null;
+  descriptionError: string | null = null;
   
   // Function to handle selecting a photo
   onSelectPhoto(photo: Photo): void {
@@ -154,7 +155,7 @@ export class EditProductComponent implements OnInit {
   nextPhoto(): void {
     if (this.existingPhotos.length < 2) {
       return; // No navigation needed if only 0 or 1 photo
-    }
+    }  
     // Move to next index (loop around using modulo)
     this.selectedPhotoIndex = (this.selectedPhotoIndex + 1) % this.existingPhotos.length;
     this.selectedPhoto = this.existingPhotos[this.selectedPhotoIndex];
@@ -229,66 +230,91 @@ export class EditProductComponent implements OnInit {
 
 
 
-  private buildDimensionsHint(): string | undefined {
-    const { length, depth, height } = this.product;
+  private buildDimensionsHint(): string {
+    const length = this.product.length;
+    const depth = this.product.depth;
+    const height = this.product.height;
+
+    const hasLength = !!length;
+    const hasDepth = !!depth;
+    const hasHeight = !!height;
+
     const parts: string[] = [];
 
-    if (length && length > 0) {
-      parts.push(`${length}cm`);
+    if (hasLength) {
+      parts.push(`comprimento ${length}cm`);
     }
-    if (depth && depth > 0) {
-      parts.push(`${depth}cm`);
+    if (hasDepth) {
+      parts.push(`largura ${depth}cm`);
     }
-    if (height && height > 0) {
-      parts.push(`${height}cm`);
+    if (hasHeight) {
+      parts.push(`altura ${height}cm`);
     }
 
-    return parts.length > 0 ? parts.join(' x ') : undefined;
+    return parts.join(', ');
   }
 
 
+  private base64ToFile(base64: string, fileName: string, contentType = 'image/jpeg'): File {
+    const byteString = atob(base64);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
 
-  onGenerateDescriptionFromAi(): void {
-    this.aiErrorMessage = null;
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
 
-    const base64 = this.getPrimaryImageBase64();
-    if (!base64) {
-      this.aiErrorMessage = 'Adicione ou selecione uma foto para usar a IA.';
+    return new File([ab], fileName, { type: contentType });
+  }
+
+  onAutoDescribe(): void {
+    this.descriptionError = null;
+
+    // Choose photo: selectedPhoto, or first existing
+    const photoSource: Photo | null =
+      this.selectedPhoto || (this.existingPhotos.length > 0 ? this.existingPhotos[0] : null);
+
+    if (!photoSource) {
+      this.descriptionError = 'Selecione ou adicione pelo menos uma foto antes de usar a IA.';
       return;
     }
 
+    // Convert Base64 → File
+    const file = this.base64ToFile(photoSource.src, 'produto.jpg');
+
     this.isGeneratingDescription = true;
 
-    // Build hints (you can refine these later – e.g. dynamic location)
-    const locationHint = 'Vila Mariana, São Paulo';
-    const priceHint = this.product.price ? String(this.product.price) : undefined;
     const dimensionsHint = this.buildDimensionsHint();
 
-    // Existing photos come as pure base64, so create a data URL
-    const dataUrl = `data:image/jpeg;base64,${base64}`;
-
-    this.descriptionAiService
-      .generateDescriptionFromImageDataUrl(dataUrl, {
-        location: locationHint,
-        price: priceHint,
-        dimensions: dimensionsHint,
-      })
-      .subscribe({
-        next: (resp) => {
-          if (resp.titlePt) {
-            this.product.name = resp.titlePt;
-          }
-          if (resp.descriptionPt) {
-            this.product.description = resp.descriptionPt;
-          }
-          this.isGeneratingDescription = false;
-        },
-        error: (err) => {
-          console.error('AI description error', err);
-          this.aiErrorMessage = 'Erro ao chamar o serviço de IA. Tente novamente.';
-          this.isGeneratingDescription = false;
-        },
-      });
+    this.descriptionService.generateDescription(file, {
+      price: this.product.price || undefined,
+      dimensions: dimensionsHint || undefined,
+      // Optionally:
+      // category: this.resolveCategoryName(),
+      // conditionHint: 'bom'
+    }).subscribe({
+      next: (res) => {
+        if (res.titlePt) {
+          this.product.name = res.titlePt;
+        }
+        if (res.descriptionPt) {
+          this.product.description = res.descriptionPt;
+        }
+        this.isGeneratingDescription = false;
+      },
+      error: (err) => {
+        console.error('AI description error (edit product)', err);
+        this.descriptionError = 'Erro ao gerar descrição automática.';
+        this.isGeneratingDescription = false;
+      }
+    });
   }
+
+  // Optional: if you want to send category name to the backend later
+  private resolveCategoryName(): string | undefined {
+    const match = this.categories.find(c => c.categoryId === this.product.category);
+    return match?.name;
+  }
+
 
 }
