@@ -30,18 +30,27 @@
                       name="description"
                       rows="4"
                       required></textarea>
+            
+            <div class="description-actions">
+              <button
+                type="button"
+                class="ai-btn"
+                (click)="onAutoDescribe()"
+                [disabled]="!existingPhotos.length || isGeneratingDescription">
+                Usar IA para preencher título e descrição
+              </button>
 
-            <button type="button"
-                    class="ai-btn"
-                    (click)="onAutoDescribe()"
-                    [disabled]="isGeneratingDescription">
-              {{ isGeneratingDescription ? 'Gerando...' : 'Usar IA para preencher' }}
-            </button>
+              <small *ngIf="!existingPhotos.length">
+                Adicione pelo menos uma foto para usar a IA.
+              </small>
+              <small *ngIf="isGeneratingDescription">
+                Gerando descrição automática...
+              </small>
+              <small *ngIf="descriptionError" class="error">
+                {{ descriptionError }}
+              </small>
+            </div>
           </div>  
-
-          <div class="ai-error" *ngIf="descriptionError">
-            {{ descriptionError }}
-          </div>
         </div>
           
 
