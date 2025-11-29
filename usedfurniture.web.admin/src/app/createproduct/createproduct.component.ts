@@ -214,15 +214,11 @@ export class CreateProductComponent implements OnInit {
       if (item.type.startsWith('image/')) {
         const file = item.getAsFile();
         if (file) {
-          // ✅ Just pass an array of File
           this.processFiles([file]);
         }
       }
     }
-
-    // Optional: avoid pasting into a focused input/textarea
     event.preventDefault();
   }
-
 
 }

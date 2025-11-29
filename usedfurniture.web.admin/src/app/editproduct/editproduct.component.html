@@ -1,5 +1,7 @@
 <!-- edit-product.component.html -->
-<div class="edit-product-container">
+<div class="edit-product-container"
+     (paste)="onPaste($event)"
+     >
   <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
 
   <h2>Editar Produto</h2>
@@ -20,9 +22,31 @@
           </option>
         </select>
         <div class="form-group">
-          <label for="description">Descrição:</label>
-          <textarea id="description" type="text" [(ngModel)]="product.description" name="description" rows="4" required></textarea>
+          <div class="description-header">
+            <label for="description">Descrição:</label>
+            <button
+              type="button"
+              class="ai-description-btn"
+              (click)="onGenerateDescriptionFromAi()"
+              [disabled]="isGeneratingDescription || existingPhotos.length === 0">
+              {{ isGeneratingDescription ? 'Gerando...' : 'Usar IA para preencher' }}
+            </button>
+          </div>
+
+          <textarea
+            id="description"
+            [(ngModel)]="product.description"
+            name="description"
+            rows="4"
+            required>
+          </textarea>
+
+          <div class="ai-error-message" *ngIf="aiErrorMessage">
+            {{ aiErrorMessage }}
+          </div>
         </div>
+
+        
 
         <div class="form-group">
           <label for="length">Comprimento (cm):</label>

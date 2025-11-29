@@ -1,4 +1,6 @@
-<div class="create-product-container">
+<div class="create-product-container"
+     (paste)="onPaste($event)"
+     >
   <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
 
   <h2>Criar Novo Produto</h2>

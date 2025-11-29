@@ -30,16 +30,19 @@ export class EditProductComponent implements OnInit {
   categories: { categoryId: number; name: string }[] = [];
   isDragOver = false;
   uploadedPhotos: Photo[] = [];
-
+  
   constructor(
     private productsService: ProductsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router, 
+    private descriptionAiService: DescriptionAiService
   ) { }
   selectedPhotoIndex: number = 0; // Track which photo is selected
-
+  
+  isGeneratingDescription = false;
+  aiErrorMessage: string | null = null;
+  
   // Function to handle selecting a photo
-
   onSelectPhoto(photo: Photo): void {
     this.selectedPhoto = photo;
 
@@ -207,6 +210,85 @@ export class EditProductComponent implements OnInit {
     }
     // Optional: avoid pasting into a focused input/textarea
     event.preventDefault();
+  }
+
+
+  /**
+   * Returns the primary image base64 (without data URL prefix) to send to the AI.
+   * Prefers the selected photo; falls back to the first existing photo.
+   */
+  private getPrimaryImageBase64(): string | null {
+    if (this.selectedPhoto && this.selectedPhoto.src) {
+      return this.selectedPhoto.src;           // base64 from backend
+    }
+    if (this.existingPhotos.length > 0 && this.existingPhotos[0].src) {
+      return this.existingPhotos[0].src;
+    }
+    return null;
+  }
+
+
+
+  private buildDimensionsHint(): string | undefined {
+    const { length, depth, height } = this.product;
+    const parts: string[] = [];
+
+    if (length && length > 0) {
+      parts.push(`${length}cm`);
+    }
+    if (depth && depth > 0) {
+      parts.push(`${depth}cm`);
+    }
+    if (height && height > 0) {
+      parts.push(`${height}cm`);
+    }
+
+    return parts.length > 0 ? parts.join(' x ') : undefined;
+  }
+
+
+
+  onGenerateDescriptionFromAi(): void {
+    this.aiErrorMessage = null;
+
+    const base64 = this.getPrimaryImageBase64();
+    if (!base64) {
+      this.aiErrorMessage = 'Adicione ou selecione uma foto para usar a IA.';
+      return;
+    }
+
+    this.isGeneratingDescription = true;
+
+    // Build hints (you can refine these later – e.g. dynamic location)
+    const locationHint = 'Vila Mariana, São Paulo';
+    const priceHint = this.product.price ? String(this.product.price) : undefined;
+    const dimensionsHint = this.buildDimensionsHint();
+
+    // Existing photos come as pure base64, so create a data URL
+    const dataUrl = `data:image/jpeg;base64,${base64}`;
+
+    this.descriptionAiService
+      .generateDescriptionFromImageDataUrl(dataUrl, {
+        location: locationHint,
+        price: priceHint,
+        dimensions: dimensionsHint,
+      })
+      .subscribe({
+        next: (resp) => {
+          if (resp.titlePt) {
+            this.product.name = resp.titlePt;
+          }
+          if (resp.descriptionPt) {
+            this.product.description = resp.descriptionPt;
+          }
+          this.isGeneratingDescription = false;
+        },
+        error: (err) => {
+          console.error('AI description error', err);
+          this.aiErrorMessage = 'Erro ao chamar o serviço de IA. Tente novamente.';
+          this.isGeneratingDescription = false;
+        },
+      });
   }
 
 }
