@@ -25,6 +25,11 @@ export class ProductsListComponent implements OnInit {
     selectedCategoryId: number | null = null;
     filteredProducts: Product[] = [];
 
+    removing: { [productId: number]: boolean } = {};
+    confirmRemoveProduct: Product | null = null;
+
+
+
     constructor(private productsService: ProductsService, private router: Router) { }
 
     // Function Update: Fetch products on init
@@ -59,16 +64,55 @@ export class ProductsListComponent implements OnInit {
         this.router.navigate(['/edit-product', product.id]);
     }
 
-    // Function Update: Remove a product from the list
-    onRemove(productId: number) {
-        this.productsService.removeProduct(productId).subscribe((success) => {
-            if (success) {
-                // Refresh product list
-                this.productsService.getProducts().subscribe(data => this.products = data);
-                this.filterProducts();
-            }
+
+    // Function Update: Ask for confirmation before removing
+    onRemove(product: Product) {
+        this.confirmRemoveProduct = product;
+    }
+
+    cancelRemove() {
+        this.confirmRemoveProduct = null;
+    }
+
+
+    confirmRemove() {
+        if (!this.confirmRemoveProduct || this.confirmRemoveProduct.id == null) {
+            return;
+        }
+
+        const productId = this.confirmRemoveProduct.id;
+
+        // Avoid duplicate clicks while already processing
+        if (this.removing[productId]) {
+            return;
+        }
+
+        this.removing[productId] = true;
+
+        this.productsService.removeProduct(productId).subscribe({
+            next: (success) => {
+                if (success) {
+                    // Refresh products + photos and keep filters in sync
+                    this.productsService.getProducts().subscribe((products) => {
+                        this._loadProductPhotos(products);
+                        this.filterProducts();
+                    });
+                }
+            },
+            error: (err) => {
+                console.error('Error removing product', err);
+                // You can optionally show a toast/alert here
+            },
+            complete: () => {
+                this.removing[productId] = false;
+                this.confirmRemoveProduct = null;
+            },
         });
     }
+
+
+    // Function Update: Remove a product from the list
+
 
     // Function Update: Navigate to create product component
     onCreateNew() {

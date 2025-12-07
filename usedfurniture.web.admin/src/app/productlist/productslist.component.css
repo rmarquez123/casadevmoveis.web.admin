@@ -1,23 +1,30 @@
 /** src\app\productlist\productslist.component.css **/
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: Arial, sans-serif; /* Use a Sans Serif font */
-  background: #F5F5F5; /* Light background for the page */
-  color: #000; /* Default text color */
+  font-family: Arial, sans-serif;
+  /* Use a Sans Serif font */
+  background: #F5F5F5;
+  /* Light background for the page */
+  color: #000;
+  /* Default text color */
   box-sizing: border-box;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
 .products-container {
   display: flex;
   /* height: 100vh; Full viewport height */
-  overflow: hidden; /* Prevent body scroll, let .main-content scroll if needed */
+  overflow: hidden;
+  /* Prevent body scroll, let .main-content scroll if needed */
 }
 
 .sidebar {
@@ -26,7 +33,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 20px 0;  
+  padding: 20px 0;
 }
 
 .sidebar button {
@@ -50,7 +57,8 @@ html, body {
   display: flex;
   flex-direction: column;
   background: #000;
-  overflow: auto; /* Enable scrolling if content grows beyond viewport */
+  overflow: auto;
+  /* Enable scrolling if content grows beyond viewport */
   padding: 20px;
 }
 
@@ -89,7 +97,8 @@ table {
   */
 }
 
-th, td {
+th,
+td {
   padding: 12px 10px;
   border-bottom: 1px solid #4A4A4A;
   text-align: left;
@@ -131,18 +140,23 @@ td button:hover {
   font-size: 0.8rem;
   text-align: center;
 }
+
 .create-btn {
   background: #15747D;
   color: #fff;
   border: none;
-  padding: 10px 16px; /* Adjust padding for a sleeker look */
+  padding: 10px 16px;
+  /* Adjust padding for a sleeker look */
   margin-bottom: 20px;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 1rem; /* Slightly larger font for emphasis */
-  align-self: flex-start; /* Prevent it from stretching across the container */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for a polished look */
+  font-size: 1rem;
+  /* Slightly larger font for emphasis */
+  align-self: flex-start;
+  /* Prevent it from stretching across the container */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for a polished look */
 }
 
 .create-btn:hover {
@@ -181,7 +195,8 @@ td button:hover {
 
   .sidebar button {
     margin: 8px 0;
-    width: auto; /* Let them size naturally */
+    width: auto;
+    /* Let them size naturally */
   }
 
   .main-content {
@@ -190,7 +205,8 @@ td button:hover {
   }
 
   table {
-    font-size: 0.8rem; /* Slightly smaller on mobile */
+    font-size: 0.8rem;
+    /* Slightly smaller on mobile */
   }
 }
 
@@ -237,7 +253,7 @@ td button:hover {
   justify-content: space-between;
   align-items: center;
   margin-top: 16px;
-  
+
   flex-direction: row;
   align-items: stretch;
   justify-content: flex-start;
@@ -263,18 +279,22 @@ td button:hover {
 
 .controls-container {
   display: flex;
-  justify-content: space-between; /* Distribute items across the row */
+  justify-content: space-between;
+  /* Distribute items across the row */
   align-items: center;
   margin-top: 16px;
 }
 
-.view-toggle, .filter-container {
+.view-toggle,
+.filter-container {
   display: flex;
-  gap: 10px; /* Space between controls */
+  gap: 10px;
+  /* Space between controls */
 }
 
 .button-container {
-  margin-left: auto; /* Push the button to the right */
+  margin-left: auto;
+  /* Push the button to the right */
 }
 
 .create-btn {
@@ -314,9 +334,11 @@ td button:hover {
   font-size: 1rem;
 }
 
-.button-container, .view-toggle {
+.button-container,
+.view-toggle {
   display: flex;
-  margin-left: auto; /* Align buttons to the right by default */
+  margin-left: auto;
+  /* Align buttons to the right by default */
 }
 
 .create-btn {
@@ -335,24 +357,96 @@ td button:hover {
 
 @media (max-width: 768px) {
   .controls-container {
-    flex-direction: column; /* Stack elements vertically */
+    flex-direction: column;
+    /* Stack elements vertically */
     justify-content: flex-start;
     align-items: stretch;
   }
 
-  .button-container, .view-toggle {
-    margin: 0; /* Remove right alignment for mobile */
-    order: 1; /* Ensure buttons appear at the bottom */
-    margin-top: auto; /* Push to the bottom */
+  .button-container,
+  .view-toggle {
+    margin: 0;
+    /* Remove right alignment for mobile */
+    order: 1;
+    /* Ensure buttons appear at the bottom */
+    margin-top: auto;
+    /* Push to the bottom */
   }
 
   .filter-container {
-    order: 0; /* Ensure filter appears above the buttons */
+    order: 0;
+    /* Ensure filter appears above the buttons */
   }
 
-  .view-toggle, .button-container {
+  .view-toggle,
+  .button-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
+}
+
+
+td button[disabled],
+.grid-item button[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: #2F2F2F;
+  color: #fff;
+  padding: 20px 24px;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 90%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dialog h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+}
+
+.dialog p {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dialog-actions button {
+  background: #15747D;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dialog-actions button.secondary {
+  background: #555;
+}
+
+.dialog-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

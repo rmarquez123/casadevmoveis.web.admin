@@ -13,8 +13,8 @@
 
     <!-- Category filter -->
     <div class="controls-container">
-      
-  
+
+
       <div class="filter-container">
         <label for="category-filter">Filtrar por Categoria:</label>
         <select id="category-filter" [(ngModel)]="selectedCategoryId" (change)="filterProducts()">
@@ -24,7 +24,7 @@
           </option>
         </select>
       </div>
-      
+
       <div class="view-toggle">
         <button class="create-btn" (click)="toggleView()">Mudar Para {{ isGridView ? 'Table' : 'Grid' }} View</button>
       </div>
@@ -63,9 +63,14 @@
           <td>{{ product.dateReceived | date }}</td>
           <td>{{ product.available ? 'Sim' : 'Não' }}</td>
           <td>
-            <button (click)="onEdit(product)">Editar</button>
-            <button (click)="onRemove(product.id!)">Remover</button>
+            <button (click)="onEdit(product)" [disabled]="removing[product.id!]">
+              Editar
+            </button>
+            <button (click)="onRemove(product)" [disabled]="removing[product.id!]">
+              Remover
+            </button>
           </td>
+
         </tr>
       </tbody>
     </table>
@@ -82,11 +87,37 @@
         <p>Data: {{ product.dateReceived | date }}</p>
         <p>Disponível: {{ product.available ? 'Sim' : 'Não' }}</p>
         <div>
-          <button (click)="onEdit(product)">Editar</button>
-          <button (click)="onRemove(product.id!)">Remover</button>
+          <button (click)="onEdit(product)" [disabled]="removing[product.id!]">
+            Editar
+          </button>
+          <button (click)="onRemove(product)" [disabled]="removing[product.id!]">
+            Remover
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Confirm removal dialog -->
+    <div class="dialog-backdrop" *ngIf="confirmRemoveProduct">
+      <div class="dialog">
+        <h2>Confirmar remoção</h2>
+        <p>
+          Tem certeza que deseja remover o produto
+          "<strong>{{ confirmRemoveProduct.name }}</strong>"?
+        </p>
+
+        <div class="dialog-actions">
+          <button (click)="confirmRemove()" [disabled]="removing[confirmRemoveProduct.id!]">
+            {{ removing[confirmRemoveProduct.id!] ? 'Removendo...' : 'Remover' }}
+          </button>
+
+          <button class="secondary" (click)="cancelRemove()" [disabled]="removing[confirmRemoveProduct.id!]">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>
