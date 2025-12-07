@@ -15,12 +15,15 @@ import { FormsModule } from '@angular/forms';
     imports: [CommonModule, RouterModule, FormsModule],
 })
 export class ProductsListComponent implements OnInit {
+
     products: Product[] = [];
+
     photos: { [key: number]: Photo[] } = {};
+
     categories: { categoryId: number; name: string }[] = [];
-    isGridView = false; // Add this variable
-    selectedCategoryId: number | null = null; // Track selected category
-    filteredProducts: Product[] = []; // Filtered list of products
+    isGridView = false;
+    selectedCategoryId: number | null = null;
+    filteredProducts: Product[] = [];
 
     constructor(private productsService: ProductsService, private router: Router) { }
 
@@ -32,12 +35,22 @@ export class ProductsListComponent implements OnInit {
         });
 
         this.productsService.getProducts().subscribe((products) => {
-            this.products = products;
-            this.filteredProducts = products;
-            const productIds: number[] = products.map((product) => product.id!);
-            this.productsService.getPhotos(productIds, 140, 180).subscribe((photos) => {
-                this.photos = photos;
-            });
+            this._loadProductPhotos(products);
+        });
+
+    }
+
+
+
+
+    private _loadProductPhotos(products: Product[]) {
+        this.products = products;
+        this.filteredProducts = products;
+        const productIds: number[] = products.map((product) => product.id!);
+        const requested_width = 50;
+        const requested_height = 50;
+        this.productsService.getPhotos(productIds, requested_width, requested_height).subscribe((photos) => {
+            this.photos = photos;
         });
     }
 
@@ -85,7 +98,7 @@ export class ProductsListComponent implements OnInit {
             return "";
         }
         // Format the price with no decimal places in Brazilian Reals. 
-        return price.toLocaleString('pt-BR', { 
+        return price.toLocaleString('pt-BR', {
             style: 'currency', // 
             currency: 'BRL', //
             minimumFractionDigits: 0 //

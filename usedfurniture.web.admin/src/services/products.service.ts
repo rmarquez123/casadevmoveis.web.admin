@@ -8,9 +8,9 @@ import { environment } from "../environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
-  
+
   private apiUrl = environment.apiUrl;
-  
+
 
   constructor(private http: HttpClient) { }
   getCategories(): Observable<{ categoryId: number; name: string }[]> {
@@ -130,12 +130,11 @@ export class ProductsService {
   }
 
 
-  getPhotos(productIds: number[], width?:number, height?:number): Observable<{ [key: number]: Photo[] }> {
-    console.log("herro")
+  getPhotos(productIds: number[], width?: number, height?: number): Observable<{ [key: number]: Photo[] }> {
     const params = new HttpParams().set('productIds', productIds.join(','))
-     .set('width', width?.toString() ?? '')
-     .set('height', height?.toString() ?? '')
-    ;
+      .set('width', width?.toString() ?? '')
+      .set('height', height?.toString() ?? '')
+      ;
     return this.http.get<{ [key: number]: Photo[] }>(`${this.apiUrl}/photos`, { params });
   }
 
