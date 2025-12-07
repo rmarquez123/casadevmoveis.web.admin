@@ -19,26 +19,29 @@ import { DescriptionService } from '../../services/description.service';
 })
 export class CreateProductComponent implements OnInit {
 
-  product: Product = { id: -1, name: '', category: 0, categoryName: 'Cozina', 
-    description: '', 
+  product: Product = {
+    id: -1, name: '', category: 0, categoryName: 'Cozina',
+    description: '',
     dateReceived: new Date(), available: true,
-    length: 0, depth: 0, height: 0, price: 0  
+    length: 0, depth: 0, height: 0, price: 0
   };
   categories: { categoryId: number; name: string }[] = [];
   dateReceived: string = '';
 
   uploadedPhotos: string[] = [];
-  isDragOver = false; 
+  isDragOver = false;
 
   uploadedFiles: File[] = [];
 
   isGeneratingDescription = false;
   descriptionError: string | null = null;
+  isCreating: boolean = false;
+
 
   constructor(
-      private productsService: ProductsService, 
-      private router: Router, 
-      private descriptionService: DescriptionService) { }
+    private productsService: ProductsService,
+    private router: Router,
+    private descriptionService: DescriptionService) { }
 
   ngOnInit(): void {
     this.dateReceived = this.formattedDateReceived();
@@ -47,24 +50,58 @@ export class CreateProductComponent implements OnInit {
     });
   }
 
+  canCreate(): boolean {
+    const hasTitle: boolean = this.product.name !== undefined && this.product.name.trim().length > 0;
+    const hasPhotos: boolean = this.uploadedPhotos.length > 0;
+
+    return (hasTitle && hasPhotos && !this.isCreating);
+  }
 
   // Function Update: Create a new product and navigate back  
+  // Function Update: Create a new product and navigate back  
   onCreate() {
+    // Guard against submit via Enter when button is disabled
+    if (!this.canCreate()) {
+      return;
+    }
+
+    const confirmed = window.confirm('Tem certeza que deseja criar este produto?');
+    if (!confirmed) {
+      return;
+    }
+
+    // Show "please wait" message and prevent double-submits
+    this.isCreating = true;
+
     this.product.dateReceived = new Date(this.dateReceived);
-    this.productsService.createProduct(this.product).subscribe((createdProductId: number) => {
-      // 1) After creation, handle photos:
-      const photoUploadObservables = this.uploadedPhotos.map(photoBase64 => {
-        const base64Data = photoBase64.replace(/^data:image\/[a-z]+;base64,/, '');
-        return this.productsService.addPhoto(createdProductId, base64Data)
-      });
-  
-      // 2) Wait for all photo uploads to finish:
-      forkJoin(photoUploadObservables).subscribe(() => {
-        // 3) Finally, navigate away once done:
-        this.router.navigate(['/products-list']);
-      });
+
+    this.productsService.createProduct(this.product).subscribe({
+      next: (createdProductId: number) => {
+        const photoUploadObservables = this.uploadedPhotos.map(photoBase64 => {
+          const base64Data = photoBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+          return this.productsService.addPhoto(createdProductId, base64Data);
+        });
+
+        forkJoin(photoUploadObservables).subscribe({
+          next: () => {
+            this.isCreating = false;
+            this.router.navigate(['/products-list']);
+          },
+          error: (err) => {
+            console.error('Erro ao enviar fotos', err);
+            this.isCreating = false;
+            // opcional: você pode adicionar um errorMessage aqui para o usuário
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao criar produto', err);
+        this.isCreating = false;
+        // opcional: mensagem de erro na tela
+      }
     });
   }
+
 
   formattedDateReceived(): string {
     const date = this.product.dateReceived;
@@ -72,14 +109,14 @@ export class CreateProductComponent implements OnInit {
     return result;
   }
 
-  
+
 
   // Function Update: Cancel creation
   onCancel() {
     this.router.navigate(['/products-list']);
   }
 
-  
+
   private processFiles(files: FileList | File[]) {
     const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
 
@@ -102,7 +139,7 @@ export class CreateProductComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-  
+
   onAutoDescribe(): void {
     this.descriptionError = null;
 
@@ -143,7 +180,7 @@ export class CreateProductComponent implements OnInit {
     });
   }
 
-  
+
   private buildDimensionsHint(): string {
     const length = this.product.length;
     const depth = this.product.depth;
@@ -181,7 +218,7 @@ export class CreateProductComponent implements OnInit {
       this.processFiles(input.files);
     }
   }
- 
+
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();

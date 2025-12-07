@@ -1,6 +1,4 @@
-<div class="create-product-container"
-     (paste)="onPaste($event)"
-     >
+<div class="create-product-container" (paste)="onPaste($event)">
   <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
 
   <h2>Criar Novo Produto</h2>
@@ -23,19 +21,11 @@
     <div class="form-group">
       <label for="description">Descrição:</label>
 
-      <textarea
-        id="description"
-        [(ngModel)]="product.description"
-        name="description"
-        rows="4"
-        required>
+      <textarea id="description" [(ngModel)]="product.description" name="description" rows="4" required>
       </textarea>
 
       <div class="description-actions">
-        <button
-          type="button"
-          class="ai-btn"
-          (click)="onAutoDescribe()"
+        <button type="button" class="ai-btn" (click)="onAutoDescribe()"
           [disabled]="!uploadedFiles.length || isGeneratingDescription">
           Usar IA para preencher título e descrição
         </button>
@@ -53,33 +43,32 @@
     </div>
 
 
-    
+
     <div class="form-group">
       <label for="length">Comprimento (cm):</label>
       <input id="length" type="number" [(ngModel)]="product.depth" name="depth" min="0" required>
     </div>
-    
+
     <div class="form-group">
       <label for="depth">Largura (cm):</label>
       <input id="depth" type="number" [(ngModel)]="product.length" name="length" min="0" required>
     </div>
-    
+
     <div class="form-group">
       <label for="height">Altura (cm):</label>
       <input id="height" type="number" [(ngModel)]="product.height" name="height" min="0" required>
     </div>
-    
+
     <div class="form-group">
       <label for="price">Preço (BRL):</label>
       <input id="price" type="number" [(ngModel)]="product.price" name="price" min="0" step="50" required>
     </div>
-    
+
 
 
     <div class="form-group">
       <label for="date-received">Data de Recebimento:</label>
-      <input id="date-received" type="date" [(ngModel)]="dateReceived"
-        name="dateReceived" required />
+      <input id="date-received" type="date" [(ngModel)]="dateReceived" name="dateReceived" required />
     </div>
 
     <div class="form-group checkbox-group">
@@ -91,34 +80,23 @@
 
 
     <div class="form-group">
-  <label for="photos">Fotos:</label>
+      <label for="photos">Fotos:</label>
 
-    <div class="drop-zone"
-         [class.drop-zone--over]="isDragOver"
-         (dragover)="onDragOver($event)"
-         (dragleave)="onDragLeave($event)"
-         (drop)="onDrop($event)"
-         (paste)="onPaste($event)"
-         (click)="fileInput.click()">
+      <div class="drop-zone" [class.drop-zone--over]="isDragOver" (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (paste)="onPaste($event)" (click)="fileInput.click()">
 
-      <p>
-        Arraste e solte as fotos aqui<br>
-        <span>ou clique para selecionar</span>
-      </p>
+        <p>
+          Arraste e solte as fotos aqui<br>
+          <span>ou clique para selecionar</span>
+        </p>
 
-      <!-- Hidden file input, still used for normal click selection -->
-      <input
-        #fileInput
-        id="photos"
-        type="file"
-        (click)="$event.stopPropagation()"
-        (change)="onPhotoUpload($event)"
-        multiple
-        accept="image/*">
+        <!-- Hidden file input, still used for normal click selection -->
+        <input #fileInput id="photos" type="file" (click)="$event.stopPropagation()" (change)="onPhotoUpload($event)"
+          multiple accept="image/*">
+      </div>
+
+      <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
     </div>
-
-    <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
-  </div>
 
 
     <div class="photos-preview" *ngIf="uploadedPhotos.length > 0">
@@ -128,6 +106,12 @@
       </div>
     </div>
 
-    <button type="submit" class="create-btn">Criar</button>
+    <button type="submit" class="create-btn" [disabled]="!canCreate()">
+      Criar
+    </button>
+    <p *ngIf="isCreating" class="creating-message">
+      Criando produto, por favor aguarde...
+    </p>
+
   </form>
 </div>
