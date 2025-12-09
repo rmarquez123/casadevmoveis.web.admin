@@ -40,6 +40,7 @@
     <table *ngIf="!isGridView">
       <thead>
         <tr>
+          <th>Codigo</th>
           <th>Item</th>
           <th>Categoria</th>
           <th>Fotos</th>
@@ -51,6 +52,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let product of filteredProducts" (dblclick)="onEdit(product)">
+          <td>{{ formatCode(product.id) }}</td>
           <td>{{ product.name }}</td>
           <td>{{ product.categoryName }}</td>
           <td>
