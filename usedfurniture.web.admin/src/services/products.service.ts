@@ -102,7 +102,10 @@ export class ProductsService {
         .set('length', updatedProduct.length.toString())
         .set('depth', updatedProduct.depth.toString())
         .set('height', updatedProduct.height.toString())
-        .set('price', updatedProduct.price.toString());
+        .set('price', updatedProduct.price.toString())
+        .set('siteVisible', updatedProduct.siteVisible ? 'true' : 'false')
+        .set('socialMediaVisible', updatedProduct.socialMediaVisible ? 'true' : 'false')
+        ;
       ;
     } else {
       payload = new HttpParams()
