@@ -20,9 +20,13 @@ import { DescriptionService } from '../../services/description.service';
 export class CreateProductComponent implements OnInit {
 
   product: Product = {
-    id: -1, name: '', category: 0, categoryName: 'Cozina',
+    id: -1,
+    name: '',
+    category: 0,
+    categoryName: 'Cozina',
     description: '',
-    dateReceived: new Date(), available: true,
+    dateReceived: new Date(),
+    available: true,
     length: 0, depth: 0, height: 0, price: 0,
     siteVisible: false,
     socialMediaVisible: false
@@ -59,8 +63,6 @@ export class CreateProductComponent implements OnInit {
     return (hasTitle && hasPhotos && !this.isCreating);
   }
 
-  // Function Update: Create a new product and navigate back  
-  // Function Update: Create a new product and navigate back  
   onCreate() {
     // Guard against submit via Enter when button is disabled
     if (!this.canCreate()) {
