@@ -221,22 +221,6 @@ export class EditProductComponent implements OnInit {
   }
 
 
-  /**
-   * Returns the primary image base64 (without data URL prefix) to send to the AI.
-   * Prefers the selected photo; falls back to the first existing photo.
-   */
-  private getPrimaryImageBase64(): string | null {
-    if (this.selectedPhoto && this.selectedPhoto.src) {
-      return this.selectedPhoto.src;           // base64 from backend
-    }
-    if (this.existingPhotos.length > 0 && this.existingPhotos[0].src) {
-      return this.existingPhotos[0].src;
-    }
-    return null;
-  }
-
-
-
   private buildDimensionsHint(): string {
     const length = this.product.length;
     const depth = this.product.depth;
@@ -315,12 +299,6 @@ export class EditProductComponent implements OnInit {
         this.isGeneratingDescription = false;
       }
     });
-  }
-
-  // Optional: if you want to send category name to the backend later
-  private resolveCategoryName(): string | undefined {
-    const match = this.categories.find(c => c.categoryId === this.product.category);
-    return match?.name;
   }
 
 

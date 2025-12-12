@@ -90,6 +90,7 @@ export class ProductsService {
 
   updateProduct(updatedProduct: Product): Observable<void> {
     let payload;
+    console.log('Updating product:', updatedProduct);
     if (updatedProduct.dateSold) {
       payload = new HttpParams()
         .set('productId', updatedProduct.id!.toString())
