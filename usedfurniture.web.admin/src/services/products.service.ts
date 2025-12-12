@@ -19,7 +19,9 @@ export class ProductsService {
 
   // Fetch all products from the backend
   getProducts(): Observable<Product[]> {
+
     const self = this;
+
     return this.http.get<any[]>(`${this.apiUrl}/products`).pipe(
       map((data: any[]) => {
 
@@ -38,6 +40,8 @@ export class ProductsService {
             height: item.height,
             length: item.length,
             price: item.price,
+            siteVisible: item.siteVisible ?? false,
+            socialMediaVisible: item.socialMediaVisible ?? false
           } as Product;
         });
       })
@@ -70,8 +74,10 @@ export class ProductsService {
       .set('length', newProduct.length.toString())
       .set('depth', newProduct.depth.toString())
       .set('height', newProduct.height.toString())
-      .set('price', newProduct.price.toString());
-    ;
+      .set('price', newProduct.price.toString())
+      .set('siteVisible', newProduct.siteVisible ? 'true' : 'false')
+      .set('socialMediaVisible', newProduct.socialMediaVisible ? 'true' : 'false')
+      ;
 
 
     return this.http.post<number>(`${this.apiUrl}/products/add`, params.toString(), {
@@ -109,7 +115,10 @@ export class ProductsService {
         .set('length', updatedProduct.length.toString())
         .set('depth', updatedProduct.depth.toString())
         .set('height', updatedProduct.height.toString())
-        .set('price', updatedProduct.price.toString());
+        .set('price', updatedProduct.price.toString())
+        .set('siteVisible', updatedProduct.siteVisible ? 'true' : 'false')
+        .set('socialMediaVisible', updatedProduct.socialMediaVisible ? 'true' : 'false')
+        ;
     }
 
     return this.http.post<void>(`${this.apiUrl}/products/edit`, payload.toString(), {
@@ -124,9 +133,10 @@ export class ProductsService {
    */
   removeProduct(productId: number): Observable<boolean> {
     const payload = new HttpParams().set('productId', productId.toString());
-    return this.http.post<boolean>(`${this.apiUrl}/products/remove`, payload, {
+    const result = this.http.post<boolean>(`${this.apiUrl}/products/remove`, payload, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
+    return result
   }
 
 

@@ -14,35 +14,36 @@ import { DescriptionService } from '../../services/description.service';
   imports: [CommonModule, RouterModule, FormsModule],
 })
 export class EditProductComponent implements OnInit {
-  product: Product = { 
-              id: -1, 
-              name: '', 
-              category: 0, 
-              categoryName: 'Cozina', 
-              description: "", 
-              dateReceived: new Date(), 
-              available: false, 
-              length: 0, depth: 0, height: 0, price: 0   };
-  existingPhotos: Photo[] = []; // Existing photos
-  newPhotos: { src: string }[] = []; // Newly added photos
-  dateReceivedLocal: string = ''; // Local datetime string
+  product: Product = {
+    id: -1,
+    name: '',
+    category: 0,
+    categoryName: 'Cozina',
+    description: "",
+    dateReceived: new Date(),
+    available: false,
+    length: 0, depth: 0, height: 0, price: 0
+  };
+  existingPhotos: Photo[] = [];
+  newPhotos: { src: string }[] = [];
+  dateReceivedLocal: string = '';
 
   selectedPhoto: Photo | null = null;
   categories: { categoryId: number; name: string }[] = [];
   isDragOver = false;
   uploadedPhotos: Photo[] = [];
-  
+
   constructor(
     private productsService: ProductsService,
     private route: ActivatedRoute,
-    private router: Router, 
+    private router: Router,
     private descriptionService: DescriptionService
   ) { }
   selectedPhotoIndex: number = 0; // Track which photo is selected
-  
+
   isGeneratingDescription = false;
   descriptionError: string | null = null;
-  
+
   // Function to handle selecting a photo
   onSelectPhoto(photo: Photo): void {
     this.selectedPhoto = photo;
@@ -58,24 +59,30 @@ export class EditProductComponent implements OnInit {
       // Step 2: After categories are loaded, fetch the product
       const id = Number(this.route.snapshot.paramMap.get('id'));
       this.productsService.getProducts().subscribe((products) => {
+
         const p = products.find((prod) => prod.id === id);
         if (p) {
+
           this.product = { ...p };
+          console.log('Loaded product for editing:', this.product);
           this.dateReceivedLocal = this.toDateTimeLocal(new Date(this.product.dateReceived));
 
           if (!this.categories.some((cat) => cat.categoryId === this.product.category)) {
             console.warn('Product category not found in the category list.');
           }
-          this.productsService.getPhotosForProduct(this.product.id).subscribe((photos) => {
-            this.existingPhotos = photos;
-            if (this.existingPhotos.length > 0) {
-              this.selectedPhoto = this.existingPhotos[0]; // Default to the first photo
-            }
-          });
+
+          this.productsService.getPhotosForProduct(this.product.id) //
+            .subscribe(this.onPhotosLoaded.bind(this));
         }
       });
     });
+  }
 
+  private onPhotosLoaded(photos: Photo[]) {
+    this.existingPhotos = photos;
+    if (this.existingPhotos.length > 0) {
+      this.selectedPhoto = this.existingPhotos[0]; // Default to the first photo
+    }
   }
 
   // Convert JavaScript Date to "datetime-local" string
@@ -83,7 +90,7 @@ export class EditProductComponent implements OnInit {
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
-  
+
   // Function Update: Save changes
   onSave() {
     this.product.dateReceived = new Date(this.dateReceivedLocal);
@@ -98,17 +105,17 @@ export class EditProductComponent implements OnInit {
   onCancel() {
     this.router.navigate(['/products-list']);
   }
-  
-  
+
+
   private processFiles(files: FileList | File[]) {
     const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
-      
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
       // Optional: validate type / size
-      if (!file.type.startsWith('image/')) {  
-        continue;  
+      if (!file.type.startsWith('image/')) {
+        continue;
       }
       if (file.size > maxSizeBytes) {
         continue;
@@ -155,7 +162,7 @@ export class EditProductComponent implements OnInit {
   nextPhoto(): void {
     if (this.existingPhotos.length < 2) {
       return; // No navigation needed if only 0 or 1 photo
-    }  
+    }
     // Move to next index (loop around using modulo)
     this.selectedPhotoIndex = (this.selectedPhotoIndex + 1) % this.existingPhotos.length;
     this.selectedPhoto = this.existingPhotos[this.selectedPhotoIndex];
@@ -171,7 +178,7 @@ export class EditProductComponent implements OnInit {
     this.selectedPhoto = this.existingPhotos[this.selectedPhotoIndex];
   }
 
-  
+
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -192,7 +199,7 @@ export class EditProductComponent implements OnInit {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       this.processFiles(event.dataTransfer.files);
     }
-  } 
+  }
 
   onPaste(event: ClipboardEvent) {
     const clipboardItems = event.clipboardData?.items;

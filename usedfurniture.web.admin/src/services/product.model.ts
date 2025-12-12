@@ -6,17 +6,19 @@ export interface Product {
   available: boolean;
   dateReceived: Date;
   dateSold?: Date;
-  category: number; 
+  category: number;
   pictures?: string[];
   categoryName: string;
   depth: number;
   height: number;
   length: number;
   price: number;
+  siteVisible?: boolean;
+  socialMediaVisible?: boolean;
 }
 
 
 export interface Photo {
-  photoId : number, 
+  photoId: number,
   src: string
 }

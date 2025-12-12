@@ -23,7 +23,9 @@ export class CreateProductComponent implements OnInit {
     id: -1, name: '', category: 0, categoryName: 'Cozina',
     description: '',
     dateReceived: new Date(), available: true,
-    length: 0, depth: 0, height: 0, price: 0
+    length: 0, depth: 0, height: 0, price: 0,
+    siteVisible: false,
+    socialMediaVisible: false
   };
   categories: { categoryId: number; name: string }[] = [];
   dateReceived: string = '';

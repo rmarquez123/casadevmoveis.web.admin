@@ -1,7 +1,5 @@
 <!-- edit-product.component.html -->
-<div class="edit-product-container"
-     (paste)="onPaste($event)"
-     >
+<div class="edit-product-container" (paste)="onPaste($event)">
   <button class="back-btn" (click)="onCancel()">&larr; Voltar</button>
 
   <h2>Editar Produto</h2>
@@ -14,7 +12,7 @@
           <label for="name">Nome:</label>
           <input id="name" type="text" [(ngModel)]="product.name" name="name" required>
         </div>
-        
+
         <div class="form-group">
           <label for="category">Categoria:</label>
           <select id="category" [(ngModel)]="product.category" name="category" required>
@@ -22,22 +20,16 @@
               {{ category.name }}
             </option>
           </select>
-        </div> 
-        
+        </div>
+
         <div class="form-group">
-          
+
           <label for="description">Descrição:</label>
-          <textarea id="description" type="text"
-                    [(ngModel)]="product.description"
-                    name="description"
-                    rows="4"
-                    required></textarea>
+          <textarea id="description" type="text" [(ngModel)]="product.description" name="description" rows="4"
+            required></textarea>
 
           <div class="description-actions">
-            <button
-              type="button" 
-              class="ai-btn"
-              (click)="onAutoDescribe()"
+            <button type="button" class="ai-btn" (click)="onAutoDescribe()"
               [disabled]="!existingPhotos.length || isGeneratingDescription">
               Usar IA para preencher título e descrição
             </button>
@@ -52,8 +44,8 @@
               {{ descriptionError }}
             </small>
           </div>
-        </div> 
-        
+        </div>
+
         <div class="form-group">
           <label for="length">Comprimento (cm):</label>
           <input id="length" type="number" [(ngModel)]="product.depth" name="depth" min="0" required>
@@ -80,44 +72,39 @@
             required />
         </div>
 
-
-
         <div class="form-group checkbox-group">
           <label for="available">
             <input id="available" type="checkbox" [(ngModel)]="product.available" name="available">
             Disponível
           </label>
         </div>
+        <div class="form-group checkbox-group">
+          <label for="available">
+            <input id="siteVisible" type="checkbox" [(ngModel)]="product.siteVisible" name="siteVisible">
+            Visible no Site
+          </label>
+        </div>
 
-        <button type="submit" class="save-btn">Salvar</button>
+        <button type=" submit" class="save-btn">Salvar</button>
       </form>
 
       <!-- Add New Photos -->
       <div class="form-group photos-upload">
         <h4>Adicionar Novas Fotos:</h4>
 
-        <div class="drop-zone"
-             [class.drop-zone--over]="isDragOver"
-             (dragover)="onDragOver($event)"
-             (dragleave)="onDragLeave($event)"
-             (drop)="onDrop($event)"
-             (paste)="onPaste($event)"
-             (click)="fileInput.click()">
+        <div class="drop-zone" [class.drop-zone--over]="isDragOver" (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (paste)="onPaste($event)"
+          (click)="fileInput.click()">
 
           <p>
             Arraste e solte as fotos aqui<br>
             <span>ou clique para selecionar</span>
           </p>
 
-          <input
-            #fileInput
-            type="file"
-            (click)="$event.stopPropagation()"
-            (change)="onPhotoUpload($event)"
-            multiple
+          <input #fileInput type="file" (click)="$event.stopPropagation()" (change)="onPhotoUpload($event)" multiple
             accept="image/*">
         </div>
-        
+
         <small>Formatos suportados: JPG, PNG. Tamanho máximo: 5 MB por imagem.</small>
       </div>
     </div>
