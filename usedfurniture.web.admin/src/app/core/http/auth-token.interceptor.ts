@@ -20,9 +20,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
     return (async () => {
         await keycloakService.updateToken(30);
         const token = keycloakService.getToken();
-        console.log('[Auth] Attaching token to request', req.url, token ? '✅' : '❌');
         if (!token) return next(req);
-        console.log('[Auth] Token attached to request', req.url);
         return next(
             req.clone({
                 setHeaders: { Authorization: `Bearer ${token}` },

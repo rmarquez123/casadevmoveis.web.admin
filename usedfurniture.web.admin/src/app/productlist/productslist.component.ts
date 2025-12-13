@@ -43,12 +43,18 @@ export class ProductsListComponent implements OnInit {
 
   // Function Update: Fetch products on init
   ngOnInit() {
-    this.productsService.getCategories().subscribe((categories) => {
+    console.log('ProductsListComponent initialized');
+    const c = this.productsService.getCategories();
+    console.log('Fetching categories from', `${this.productsService['apiUrl']}/categories`);
+    c.subscribe((categories) => {
       this.categories = categories;
 
     });
 
-    this.productsService.getProducts().subscribe((products) => {
+    console.log('Fetching products...');
+    const p = this.productsService.getProducts()
+    console.log('Products fetched:', p);
+    p.subscribe((products) => {
       this._loadProductPhotos(products);
     });
 
@@ -135,7 +141,10 @@ export class ProductsListComponent implements OnInit {
       next: (success) => {
         if (success) {
           // Refresh products + photos and keep filters in sync
-          this.productsService.getProducts().subscribe((products) => {
+          console.log('Product removed successfully:', productId);
+          const p = this.productsService.getProducts();
+          console.log('Products refreshed after removal', p);
+          p.subscribe((products) => {
             this._loadProductPhotos(products);
             this.filterProducts();
           });

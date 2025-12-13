@@ -19,10 +19,9 @@ export class ProductsService {
 
   // Fetch all products from the backend
   getProducts(): Observable<Product[]> {
-
     const self = this;
-
-    return this.http.get<any[]>(`${this.apiUrl}/products`).pipe(
+    console.log('Fetching products from', `${this.apiUrl}/products`);
+    const result = this.http.get<any[]>(`${this.apiUrl}/products`).pipe(
       map((data: any[]) => {
 
         return data.map(item => {
@@ -46,6 +45,8 @@ export class ProductsService {
         });
       })
     );
+    console.log('Products fetch observable created');
+    return result;
   }
 
   private encodeChars(original: string): string {
