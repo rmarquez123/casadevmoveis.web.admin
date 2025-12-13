@@ -5,13 +5,15 @@ import { Photo, Product } from '../../services/product.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DescriptionService } from '../../services/description.service';
+import { PhotoEditorComponent } from '../shared/photo-editor/photo-editor.component';
+import { switchMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-product',
   templateUrl: './editproduct.component.html',
   styleUrls: ['./editproduct.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, PhotoEditorComponent],
 })
 export class EditProductComponent implements OnInit {
   product: Product = {
@@ -32,14 +34,15 @@ export class EditProductComponent implements OnInit {
   categories: { categoryId: number; name: string }[] = [];
   isDragOver = false;
   uploadedPhotos: Photo[] = [];
-
+  isPhotoEditorOpen = false;
+  photoBeingEdited: Photo | null = null;
   constructor(
     private productsService: ProductsService,
     private route: ActivatedRoute,
     private router: Router,
     private descriptionService: DescriptionService
   ) { }
-  selectedPhotoIndex: number = 0; // Track which photo is selected
+  selectedPhotoIndex: number = 0;
 
   isGeneratingDescription = false;
   descriptionError: string | null = null;
@@ -137,6 +140,49 @@ export class EditProductComponent implements OnInit {
     }
   }
 
+  openPhotoEditor(): void {
+    if (!this.selectedPhoto) return;
+    this.photoBeingEdited = this.selectedPhoto;
+    this.isPhotoEditorOpen = true;
+  }
+
+  closePhotoEditor(): void {
+    this.isPhotoEditorOpen = false;
+    this.photoBeingEdited = null;
+  }
+
+  /* Replace selected photo by: remove old + add edited as new */
+  onPhotoEdited(editedBase64WithPrefix: string): void {
+    console.log('Received edited photo data from editor');
+    if (this.photoBeingEdited == null || this.photoBeingEdited == undefined) return;
+
+    const editedBase64 = editedBase64WithPrefix.includes(',')
+      ? editedBase64WithPrefix.split(',')[1]
+      : editedBase64WithPrefix;
+
+    const oldPhotoId = this.photoBeingEdited.photoId;
+
+    this.productsService.removePhoto(oldPhotoId).pipe(
+      switchMap(() => this.productsService.addPhoto(this.product.id, editedBase64)),
+      map((newPhotoId) => ({ newPhotoId }))
+    ).subscribe({
+      next: ({ newPhotoId }) => {
+        /* Update UI list */
+        this.existingPhotos = this.existingPhotos.filter(p => p.photoId !== oldPhotoId);
+
+        const newPhoto: Photo = { photoId: newPhotoId, src: editedBase64 };
+        this.existingPhotos.push(newPhoto);
+
+        this.selectedPhoto = newPhoto;
+        this.selectedPhotoIndex = Math.max(0, this.existingPhotos.length - 1);
+
+        this.closePhotoEditor();
+      },
+      error: (err) => {
+        console.error('Failed to replace photo with edited version', err);
+      }
+    });
+  }
 
 
   onPhotoUpload(event: Event) {

@@ -1,0 +1,39 @@
+<div class="editor-backdrop">
+    <div class="editor-card">
+        <div class="editor-header">
+            <div class="title">Editar foto</div>
+
+            <div class="toolbar">
+                <button type="button" (click)="rotateLeft(1)">-1°</button>
+                <button type="button" (click)="rotateRight(1)">+1°</button>
+
+                <button type="button" (click)="rotateLeft(0.25)">-0.25°</button>
+                <button type="button" (click)="rotateRight(0.25)">+0.25°</button>
+
+                <button type="button" (click)="zoom(-0.1)">-</button>
+                <button type="button" (click)="zoom(0.1)">+</button>
+
+                <button type="button" (click)="flipH()">⇋</button>
+                <button type="button" (click)="flipV()">⇅</button>
+
+                <button type="button" class="muted" (click)="reset()">Reset</button>
+            </div>
+        </div>
+
+        <div class="editor-body">
+            <image-cropper [imageBase64]="imageBase64" [maintainAspectRatio]="false" [containWithinAspectRatio]="false"
+                [transform]="transform" format="jpeg" (imageCropped)="onImageCropped($event)">
+            </image-cropper>
+
+        </div>
+        <input type="range" min="-15" max="15" step="0.1" [value]="rotationDeg" (input)="onRotateSlider($event)" />
+        <span>{{ rotationDeg | number:'1.1-1' }}°</span>
+
+        <div class="editor-footer">
+            <button type="button" class="muted" (click)="onCancel()">Cancelar</button>
+            <button type="button" class="primary" [disabled]="!editedBase64" (click)="onSave()">
+                Aplicar
+            </button>
+        </div>
+    </div>
+</div>

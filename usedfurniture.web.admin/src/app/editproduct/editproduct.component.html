@@ -128,6 +128,14 @@
           Remover Foto
         </button>
       </div>
+      <button type="button" class="save-btn" (click)="openPhotoEditor()" [disabled]="!selectedPhoto">
+        Editar Foto (cortar/rotacionar)
+      </button>
+
+      <app-photo-editor *ngIf="isPhotoEditorOpen && photoBeingEdited"
+        [imageBase64]="'data:image/jpeg;base64,' + photoBeingEdited.src" (cancel)="closePhotoEditor()"
+        (save)="onPhotoEdited($event)">
+      </app-photo-editor>
 
       <!-- Large Selected Photo + Next/Previous -->
       <div class="selected-photo" *ngIf="selectedPhoto">
