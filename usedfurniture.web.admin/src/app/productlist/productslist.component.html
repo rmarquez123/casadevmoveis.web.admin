@@ -89,16 +89,36 @@
     <table *ngIf="!isGridView">
       <thead>
         <tr>
-          <th>Codigo</th>
-          <th>Item</th>
-          <th>Categoria</th>
+          <th class="sortable" (click)="setSort('id')">
+            Codigo <span class="sort-ind">{{ sortIndicator('id') }}</span>
+          </th>
+
+          <th class="sortable" (click)="setSort('name')">
+            Item <span class="sort-ind">{{ sortIndicator('name') }}</span>
+          </th>
+
+          <th class="sortable" (click)="setSort('categoryName')">
+            Categoria <span class="sort-ind">{{ sortIndicator('categoryName') }}</span>
+          </th>
+
           <th>Fotos</th>
-          <th>Preco</th>
-          <th>Data de Recebimento</th>
-          <th>Disponível</th>
+
+          <th class="sortable" (click)="setSort('price')">
+            Preco <span class="sort-ind">{{ sortIndicator('price') }}</span>
+          </th>
+
+          <th class="sortable" (click)="setSort('dateReceived')">
+            Data de Recebimento <span class="sort-ind">{{ sortIndicator('dateReceived') }}</span>
+          </th>
+
+          <th class="sortable" (click)="setSort('available')">
+            Disponível <span class="sort-ind">{{ sortIndicator('available') }}</span>
+          </th>
+
           <th>Ações</th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let product of filteredProducts" (dblclick)="onEdit(product)">
           <td>{{ formatCode(product.id) }}</td>

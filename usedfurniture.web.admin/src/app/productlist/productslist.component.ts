@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { keycloakService } from '../core/auth/keycloak.service'; // adjust path as needed
 
+type SortKey = 'id' | 'name' | 'categoryName' | 'price' | 'dateReceived' | 'available';
+
 @Component({
   standalone: true,
   selector: 'app-products-list',
@@ -38,6 +40,9 @@ export class ProductsListComponent implements OnInit {
   filterSiteVisible: boolean | null = null;
   filtersOpen = false;
 
+  sortKey: SortKey = 'dateReceived';
+  sortDir: 'asc' | 'desc' = 'desc';
+
 
   constructor(private productsService: ProductsService, private router: Router) { }
 
@@ -59,6 +64,79 @@ export class ProductsListComponent implements OnInit {
     });
     console.log('Products subscription set up');
   }
+
+  setSort(key: SortKey) {
+    if (this.sortKey === key) {
+      this.sortDir = ((this.sortDir === 'asc') ? 'desc' : 'asc') as 'asc' | 'desc';
+    } else {
+      this.sortKey = key;
+      this.sortDir = 'asc';
+    }
+
+    this._sortFilteredProducts();
+  }
+
+  sortIndicator(key: SortKey): string {
+    if (this.sortKey !== key) return '';
+    return this.sortDir === 'asc' ? '▲' : '▼';
+  }
+
+  private _sortFilteredProducts() {
+    const dir = this.sortDir === 'asc' ? 1 : -1;
+
+    const safeStr = (v: unknown) => (v ?? '').toString().toLowerCase().trim();
+    const safeNum = (v: unknown) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : -Infinity;
+    };
+    const safeDateMs = (v: unknown) => {
+      if (!v) return -Infinity;
+      const ms = new Date(v as any).getTime();
+      return Number.isFinite(ms) ? ms : -Infinity;
+    };
+    const safeBool = (v: unknown) => (v === true ? 1 : 0);
+
+    this.filteredProducts.sort((a, b) => {
+      let av: any;
+      let bv: any;
+
+      switch (this.sortKey) {
+        case 'id':
+          av = safeNum(a.id);
+          bv = safeNum(b.id);
+          return (av - bv) * dir;
+
+        case 'price':
+          av = safeNum(a.price);
+          bv = safeNum(b.price);
+          return (av - bv) * dir;
+
+        case 'dateReceived':
+          av = safeDateMs(a.dateReceived);
+          bv = safeDateMs(b.dateReceived);
+          return (av - bv) * dir;
+
+        case 'available':
+          av = safeBool(a.available);
+          bv = safeBool(b.available);
+          return (av - bv) * dir;
+
+        case 'name':
+          av = safeStr(a.name);
+          bv = safeStr(b.name);
+          return av.localeCompare(bv) * dir;
+
+        case 'categoryName':
+          av = safeStr(a.categoryName);
+          bv = safeStr(b.categoryName);
+          return av.localeCompare(bv) * dir;
+
+        default:
+          return 0;
+      }
+    });
+  }
+
 
   toggleFilters() {
     this.filtersOpen = !this.filtersOpen;
@@ -215,6 +293,7 @@ export class ProductsListComponent implements OnInit {
 
       return true;
     });
+    this._sortFilteredProducts();
   }
 
   formatPrice(price: number): string {

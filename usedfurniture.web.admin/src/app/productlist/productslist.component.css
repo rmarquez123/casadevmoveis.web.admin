@@ -602,3 +602,19 @@ td button[disabled],
     grid-column: auto;
   }
 }
+
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable:hover {
+  filter: brightness(1.05);
+}
+
+.sort-ind {
+  margin-left: 8px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
