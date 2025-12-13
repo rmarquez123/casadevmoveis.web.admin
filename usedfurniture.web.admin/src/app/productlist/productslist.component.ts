@@ -57,7 +57,7 @@ export class ProductsListComponent implements OnInit {
     p.subscribe((products) => {
       this._loadProductPhotos(products);
     });
-
+    console.log('Products subscription set up');
   }
 
   toggleFilters() {
