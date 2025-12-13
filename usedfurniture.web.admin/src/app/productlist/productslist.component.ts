@@ -28,6 +28,14 @@ export class ProductsListComponent implements OnInit {
   removing: { [productId: number]: boolean } = {};
   confirmRemoveProduct: Product | null = null;
 
+  filterName: string = '';
+
+  filterId: number | null = null;
+
+  /* tri-state: null = all, true/false filters */
+  filterAvailable: boolean | null = null;
+  filterSiteVisible: boolean | null = null;
+  filtersOpen = false;
 
 
   constructor(private productsService: ProductsService, private router: Router) { }
@@ -45,19 +53,50 @@ export class ProductsListComponent implements OnInit {
 
   }
 
+  toggleFilters() {
+    this.filtersOpen = !this.filtersOpen;
+  }
 
+  closeFilters() {
+    this.filtersOpen = false;
+  }
+
+  clearFilters() {
+    this.filterName = '';
+    this.filterId = null;
+    this.filterAvailable = null;
+    this.filterSiteVisible = null;
+    this.selectedCategoryId = null;
+    this.filterProducts();
+  }
+
+  getActiveFilterCount(): number {
+    let n = 0;
+    if ((this.filterName || '').trim().length > 0) n++;
+    if (this.filterId !== null && this.filterId !== undefined) n++;
+    if (this.filterAvailable !== null) n++;
+    if (this.filterSiteVisible !== null) n++;
+    if (this.selectedCategoryId !== null) n++;
+    return n;
+  }
 
 
   private _loadProductPhotos(products: Product[]) {
     this.products = products;
-    this.filteredProducts = products;
+
+    // Keep whatever filters are currently set
+    this.filterProducts();
+
     const productIds: number[] = products.map((product) => product.id!);
     const requested_width = 50;
     const requested_height = 50;
+
     this.productsService.getPhotos(productIds, requested_width, requested_height).subscribe((photos) => {
       this.photos = photos;
     });
   }
+
+
 
   // Function Update: Navigate to edit component
   onEdit(product: Product) {
@@ -124,17 +163,46 @@ export class ProductsListComponent implements OnInit {
   }
 
   filterProducts() {
-    if (this.selectedCategoryId === null) {
-      this.filteredProducts = this.products; // Show all products
-    } else {
+    const nameNeedle = (this.filterName || '').trim().toLowerCase();
+    const idNeedle = this.filterId;
 
-      this.filteredProducts = this.products.filter((p) => {
-        const result = p.category == this.selectedCategoryId
-        console.log('Product Category:', p.category, 'Selected Category ID:', this.selectedCategoryId);
-        console.log('Result:', result);
-        return result;
-      });
-    }
+    this.filteredProducts = this.products.filter((p) => {
+      /* Category */
+      if (this.selectedCategoryId !== null && p.category !== this.selectedCategoryId) {
+        return false;
+      }
+
+      /* Available (tri-state) */
+      if (this.filterAvailable !== null && p.available !== this.filterAvailable) {
+        return false;
+      }
+
+      /* Site visible (tri-state)
+         Treat undefined as false by default (common for legacy rows). */
+      if (this.filterSiteVisible !== null) {
+        const siteVisible = (p.siteVisible ?? false);
+        if (siteVisible !== this.filterSiteVisible) {
+          return false;
+        }
+      }
+
+      /* Name contains */
+      if (nameNeedle.length > 0) {
+        const hay = (p.name || '').toLowerCase();
+        if (!hay.includes(nameNeedle)) {
+          return false;
+        }
+      }
+
+      /* ID exact match */
+      if (idNeedle !== null && idNeedle !== undefined) {
+        if (p.id !== idNeedle) {
+          return false;
+        }
+      }
+
+      return true;
+    });
   }
 
   formatPrice(price: number): string {
@@ -148,9 +216,9 @@ export class ProductsListComponent implements OnInit {
       minimumFractionDigits: 0 //
     });
   }
-  
-  
-  formatCode(int:number):string {
+
+
+  formatCode(int: number): string {
     return int.toString().padStart(4, '0');
   }
 }

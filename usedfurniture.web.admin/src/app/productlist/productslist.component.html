@@ -14,15 +14,62 @@
     <!-- Category filter -->
     <div class="controls-container">
 
+      <!-- Filters dropdown -->
+      <div class="filters">
+        <button class="filters-btn" type="button" (click)="toggleFilters()">
+          Filtros
+          <span class="pill" *ngIf="getActiveFilterCount() > 0">{{ getActiveFilterCount() }}</span>
+          <span class="chev" [class.open]="filtersOpen">▾</span>
+        </button>
 
-      <div class="filter-container">
-        <label for="category-filter">Filtrar por Categoria:</label>
-        <select id="category-filter" [(ngModel)]="selectedCategoryId" (change)="filterProducts()">
-          <option [value]="null">Todas as Categorias</option>
-          <option *ngFor="let category of categories" [value]="category.categoryId">
-            {{ category.name }}
-          </option>
-        </select>
+        <div class="filters-panel" *ngIf="filtersOpen">
+          <div class="filters-grid">
+
+            <div class="field">
+              <label for="name-filter">Nome</label>
+              <input id="name-filter" type="text" [(ngModel)]="filterName" placeholder="Buscar por nome..." />
+            </div>
+
+            <div class="field">
+              <label for="id-filter">Código</label>
+              <input id="id-filter" type="number" [(ngModel)]="filterId" placeholder="Ex: 12" min="0" />
+            </div>
+
+            <div class="field">
+              <label for="available-filter">Disponível</label>
+              <select id="available-filter" [(ngModel)]="filterAvailable">
+                <option [ngValue]="null">Todos</option>
+                <option [ngValue]="true">Sim</option>
+                <option [ngValue]="false">Não</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="site-visible-filter">Site</label>
+              <select id="site-visible-filter" [(ngModel)]="filterSiteVisible">
+                <option [ngValue]="null">Todos</option>
+                <option [ngValue]="true">Visível</option>
+                <option [ngValue]="false">Oculto</option>
+              </select>
+            </div>
+
+            <div class="field field-wide">
+              <label for="category-filter">Categoria</label>
+              <select id="category-filter" [(ngModel)]="selectedCategoryId">
+                <option [ngValue]="null">Todas as Categorias</option>
+                <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="filters-actions">
+            <button class="secondary-btn" type="button" (click)="clearFilters()">Limpar</button>
+            <button class="primary-btn" type="button" (click)="filterProducts(); closeFilters()">Aplicar</button>
+          </div>
+        </div>
       </div>
 
       <div class="view-toggle">
@@ -34,6 +81,7 @@
       </div>
 
     </div>
+
 
 
     <!-- Conditionally render either the table or grid -->
