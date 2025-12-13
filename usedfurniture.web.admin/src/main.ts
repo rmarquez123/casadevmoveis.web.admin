@@ -1,9 +1,10 @@
-// main.ts
-
+// src/main.ts
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
+import { keycloakService } from './app/core/auth/keycloak.service';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
-  
+(async () => {
+  await keycloakService.init();
+  await bootstrapApplication(AppComponent, appConfig);
+})();

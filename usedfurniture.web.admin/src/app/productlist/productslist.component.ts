@@ -6,6 +6,7 @@ import { Photo, Product } from '../../services/product.model';
 import { ProductsService } from '../../services/products.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { keycloakService } from '../core/auth/keycloak.service'; // adjust path as needed
 
 @Component({
   standalone: true,
@@ -79,7 +80,9 @@ export class ProductsListComponent implements OnInit {
     if (this.selectedCategoryId !== null) n++;
     return n;
   }
-
+  onLogout(): void {
+    void keycloakService.logout();
+  }
 
   private _loadProductPhotos(products: Product[]) {
     this.products = products;

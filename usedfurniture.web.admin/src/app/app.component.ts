@@ -1,4 +1,4 @@
-// app.component.ts
+// src/app/app.component.ts
 
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router'; // Import RouterModule
@@ -12,5 +12,5 @@ import { CommonModule } from '@angular/common'; // Import CommonModule for ngCla
   imports: [RouterModule, CommonModule], // Add RouterModule to the imports array
 })
 export class AppComponent {
- 
+
 }
