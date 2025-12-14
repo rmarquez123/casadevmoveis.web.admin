@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { keycloakService } from '../core/auth/keycloak.service'; // adjust path as needed
 
-type SortKey = 'id' | 'name' | 'categoryName' | 'price' | 'dateReceived' | 'available';
+type SortKey = 'id' | 'name' | 'categoryName' | 'price' | 'dateReceived' | 'available' | 'siteVisible';
 
 @Component({
   standalone: true,
@@ -119,6 +119,11 @@ export class ProductsListComponent implements OnInit {
         case 'available':
           av = safeBool(a.available);
           bv = safeBool(b.available);
+          return (av - bv) * dir;
+
+        case 'siteVisible':
+          av = safeBool(a.siteVisible);
+          bv = safeBool(b.siteVisible);
           return (av - bv) * dir;
 
         case 'name':

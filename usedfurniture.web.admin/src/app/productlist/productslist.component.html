@@ -114,7 +114,9 @@
           <th class="sortable" (click)="setSort('available')">
             Disponível <span class="sort-ind">{{ sortIndicator('available') }}</span>
           </th>
-
+          <th class="sortable" (click)="setSort('siteVisible')">
+            Visível no Site<span class="sort-ind">{{ sortIndicator('siteVisible') }}</span>
+          </th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -133,6 +135,7 @@
           <td>{{ formatPrice(product.price)}}</td>
           <td>{{ product.dateReceived | date }}</td>
           <td>{{ product.available ? 'Sim' : 'Não' }}</td>
+          <td>{{ product.siteVisible ? 'Sim' : 'Não' }}</td>
           <td>
             <button (click)="onEdit(product)" [disabled]="removing[product.id!]">
               Editar
